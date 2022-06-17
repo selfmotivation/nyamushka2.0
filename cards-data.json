@@ -1,0 +1,32 @@
+[
+  {
+    "taste": "с фуа-гра",
+    "portionsQuantity": 10,
+    "mice": "мышь",
+    "isCustomerSatisfied": false,
+    "weight": "0,5",
+    "descriptionIfOrdered": "Печень утки разварная с артишоками.",
+    "isOrdered": false,
+    "isOver": false
+  },
+  {
+    "taste": "с рыбой",
+    "portionsQuantity": 40,
+    "mice": "2 мыши",
+    "isCustomerSatisfied": false,
+    "weight": "2",
+    "descriptionIfOrdered": "Головы щучьи с чесноком да свежайшая сёмгушка.",
+    "isOrdered": false,
+    "isOver": false
+  },
+  {
+    "taste": "с курой",
+    "portionsQuantity": 100,
+    "mice": "5 мышей",
+    "isCustomerSatisfied": true,
+    "weight": "5",
+    "descriptionIfOrdered": "Филе из цыплят с трюфелями в бульоне.",
+    "isOrdered": false,
+    "isOver": true
+  }
+]
