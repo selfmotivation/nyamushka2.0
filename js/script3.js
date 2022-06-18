@@ -5,8 +5,8 @@ const getCardsData = async(url) => {
   return data;
 };
 
-const createCards = (cardData) => {
-  const cards = cardData.
+const createCards = (cardsData) => {
+  const cards = cardsData.
     map(card => {
     return `<div class="food-item${card.isOver ? ' is_over' : ''}">
       <div class="food-card default">
@@ -29,10 +29,9 @@ const createCards = (cardData) => {
     
     document.querySelector('.food-promo').innerHTML += cards;
 
-    const buySubscriptionButton = document.querySelectorAll('.food-item__subscription-buy');
-    buySubscriptionButton.forEach(btn => {
-    btn.addEventListener('click', () => changeCardColorByText(btn));
-    btn.addEventListener('click', () => changeSubscriptionByText(btn, cardData));
+    const buySubscriptionButtons = document.querySelectorAll('.food-item__subscription-buy');
+    buySubscriptionButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => changeCardOrderStateByText(e.currentTarget, cardsData));
   });
 }
 
@@ -56,43 +55,38 @@ const removeHoverEffect = (card) => {
 
 const changeCardOrderState = (card, cardsData, e) => {
   if (e.currentTarget.classList.contains('food-card')) {
-    const cardDescription = card.querySelector('.food-card__description');
-    cardDescription.classList.remove('unchose');
-    
-    if (card.classList.contains('chosen')) {
-      cardDescription.innerHTML = 'Сказочное заморское яство';
-    }
-
     card.classList.toggle('chosen');
     card.classList.remove('hover');
-
+    
+    const cardDescription = card.querySelector('.food-card__description');
     const taste = card.querySelector('.food-card__taste').innerHTML;
     const subscription = card.nextElementSibling;
     
+    if (!card.classList.contains('chosen')) {
+      cardDescription.innerHTML = 'Сказочное заморское яство';
+      cardDescription.classList.remove('unchose');
+
+      subscription.innerHTML = 'Чего сидишь? Порадуй котэ, <span class="food-item__subscription-buy">купи</span>.';
+      const buySubscriptionButton = subscription.querySelector('.food-item__subscription-buy');
+      buySubscriptionButton.addEventListener('click', (e) => changeCardOrderStateByText(e.currentTarget, cardsData));
+    }
+
     if (card.classList.contains('chosen')) {
       cardsData.forEach(cardData => {
         if (cardData.taste === taste) subscription.innerHTML = `${cardData.descriptionIfOrdered}`;
       });
-    } else {
-      subscription.innerHTML = 'Чего сидишь? Порадуй котэ, <span class="food-item__subscription-buy">купи</span>.';
-      const buyTextButton = subscription.querySelector('.food-item__subscription-buy');
-      buyTextButton.addEventListener('click', () => changeCardColorByText(buyTextButton));
-      buyTextButton.addEventListener('click', () => changeSubscriptionByText(buyTextButton, cardsData));
     }
   }
 
   if (e.currentTarget.classList.contains('food-item__subscription-buy')) {
-    changeCardColorByText(e.currentTarget);
+    changeCardOrderStateByText(e.currentTarget, cardsData);
   }
 }
 
-const changeCardColorByText = (buyTextButton) => {
-  buyTextButton.parentElement.previousElementSibling.classList.toggle('chosen');
-}
-
-const changeSubscriptionByText = (buyTextButton, cardsData) => {
-  const taste = buyTextButton.parentElement.previousElementSibling.querySelector('.food-card__taste').innerHTML;
-  const subscription = buyTextButton.parentElement;
+const changeCardOrderStateByText = (buySubscriptionButton, cardsData) => {
+  buySubscriptionButton.parentElement.previousElementSibling.classList.toggle('chosen');
+  const taste = buySubscriptionButton.parentElement.previousElementSibling.querySelector('.food-card__taste').innerHTML;
+  const subscription = buySubscriptionButton.parentElement;
   if (subscription.previousElementSibling.classList.contains('chosen')) {
     cardsData.forEach(cardData => {
       if (cardData.taste === taste) subscription.innerHTML = `${cardData.descriptionIfOrdered}`;
@@ -112,14 +106,10 @@ const checkIfOutOfStock = (cards, cardsData) => {
   });
 }
 
-
-
 document.addEventListener('DOMContentLoaded', async () => {
-  const cardsData = await getCardsData(`../cards-data.json`);
-  
+  const cardsData = await getCardsData(`./cards-data.json`);
   createCards(cardsData);
 
   const foodCards = document.querySelectorAll('.food-card');
-  
   checkIfOutOfStock(foodCards, cardsData);
 })
